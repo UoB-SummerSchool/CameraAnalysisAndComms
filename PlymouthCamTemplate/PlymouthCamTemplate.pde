@@ -15,6 +15,7 @@ void setup()
   currentFrame = createGraphics(width, height);
   // Don't worry about these for the time-being, we will use them later !
   // mqtt = new MQTTClient(this);
+  // mqtt.connect("mqtt://broker.emqx.io:1883");
   // mqtt.connect("mqtt://broker.hivemq.com:1883");
   // mqtt.connect("mqtt://test.mosquitto.org:1883");
   // mqtt.connect("mqtt://public-mqtt-broker.bevywise.com:1883");
