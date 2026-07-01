@@ -1,19 +1,16 @@
-import processing.video.*;
 import mqtt.*;
 
 MQTTClient mqtt;
-Movie movie;
 PGraphics currentFrame;
 
 void setup()
 {
   size(700, 400);
+  loadVideo("car");
   pixelDensity(1);
   // Match the framerate of the video (which is about 2fps)
   frameRate(2);
-  movie = new Movie(this, "video.mp4");
-  movie.loop();
-  currentFrame = createGraphics(width, height);
+  currentFrame = createNewFrame();
   // Don't worry about these for the time-being, we will use them later !
   // mqtt = new MQTTClient(this);
   // mqtt.connect("mqtt://broker.emqx.io:1883");
@@ -24,8 +21,6 @@ void setup()
 
 void draw()
 {
-  if (movie.available()) {
-    movie.read();
     drawMovieOntoFrame(currentFrame);
     currentFrame.fill(0);
     currentFrame.noStroke();
@@ -46,15 +41,14 @@ void draw()
         }
       }
     }
-  }
   drawFrameOntoWindow(currentFrame);
 }
 
 void keyPressed()
 {
-  if (key=='1') movie.jump(29);  // Person walking on the grass
-  if (key=='2') movie.jump(80);  // Flock of birds flying past
-  if (key=='3') movie.jump(132); // Red car on the roundabout
+  if (key=='1') jumpTo(29);  // Person walking on the grass
+  if (key=='2') jumpTo(80);  // Flock of birds flying past
+  if (key=='3') jumpTo(134); // Red car on the roundabout
 }
 
 void mouseClicked()

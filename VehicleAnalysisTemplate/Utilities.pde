@@ -1,3 +1,14 @@
+boolean connectedToBroker = false;
+
+String videoFolder;
+int videoFrameNumber = 1;
+
+void loadVideo(String foldername)
+{
+  videoFolder = foldername;
+  videoFrameNumber = 1;
+}
+
 void drawFrameOntoWindow(PGraphics frame)
 {
   while(tryToEndDraw(frame));
@@ -15,11 +26,37 @@ boolean tryToEndDraw(PGraphics frame)
   }
 }
 
+PGraphics createNewFrame()
+{
+  PGraphics newFrame = createGraphics(width,height);
+  drawMovieOntoFrame(newFrame);
+  return newFrame;
+}
+
 void drawMovieOntoFrame(PGraphics frame)
+{
+  String paddedNumber = "" + videoFrameNumber;
+  while(paddedNumber.length()<4) paddedNumber = "0" + paddedNumber;
+  String fullFilename = sketchPath("data" + File.separator + videoFolder + File.separator + paddedNumber + ".jpg");
+  if((new File(fullFilename)).exists()) {
+    PImage image = loadImage(fullFilename);
+    drawImageOntoFrame(image, frame);
+    videoFrameNumber++;
+  }
+  else videoFrameNumber = 1;
+}
+
+void drawLiveStreamOntoFrame(PGraphics frame)
+{
+  PImage image = loadImage("http://192.171.163.3/axis-cgi/jpg/image.cgi?camera=1&resolution=700x400", "jpg");
+  drawImageOntoFrame(image, frame);
+}
+
+void drawImageOntoFrame(PImage image, PGraphics frame)
 {
   if (frame.pixels != null) {
     frame.beginDraw();
-    for (int i=0; i<movie.pixels.length; i++) frame.pixels[i] = movie.pixels[i];
+    for (int i=0; i<image.pixels.length; i++) frame.pixels[i] = image.pixels[i];
     frame.updatePixels();
     frame.endDraw();
   }
@@ -29,19 +66,10 @@ void drawMovieOntoFrame(PGraphics frame)
   frame.beginDraw();
 }
 
-void drawLiveStreamOntoFrame(PGraphics frame)
+void jumpTo(int seconds)
 {
-  if (frame.pixels != null) {
-    frame.beginDraw();
-    PImage grab = loadImage("http://192.171.163.3/axis-cgi/jpg/image.cgi?camera=1&resolution=700x400", "jpg");
-    for (int i=0; i<grab.pixels.length; i++) frame.pixels[i] = grab.pixels[i];
-    frame.updatePixels();
-    frame.endDraw();
-  }
-  // Need to do another begin and end to make sure the pixels have loaded
-  frame.beginDraw();
-  frame.endDraw();
-  frame.beginDraw();
+  // There are two frames per second
+  videoFrameNumber = seconds*2;
 }
 
 void messageReceived(String topic, byte[] payload)
@@ -50,5 +78,6 @@ void messageReceived(String topic, byte[] payload)
 
 void clientConnected()
 {
+  connectedToBroker = true;
   println("Connected to broker for sending");
 }
