@@ -21,26 +21,28 @@ void setup()
 
 void draw()
 {
-    drawMovieOntoFrame(currentFrame);
+  drawMovieOntoFrame(currentFrame);
+  if (!mousePressed) {
     currentFrame.fill(0);
     currentFrame.noStroke();
     // Mask off the lighthouse (to show an example of the `rect` function)
-    // currentFrame.rect(538, 140, 30, 90);
+    currentFrame.rect(538, 140, 30, 90);
     // Mask off the statue (to show an example of the `triangle` function)
-    // currentFrame.triangle(520,270,700,280,600,140);
+    currentFrame.triangle(520, 270, 700, 280, 600, 140);
     for (int y=0; y<height; y++) {
       for (int x=0; x<width; x++) {
-        int pixelColour = currentFrame.get(x,y);
+        int pixelColour = currentFrame.get(x, y);
         float pixelHue = hue(pixelColour);
         float pixelSaturation = saturation(pixelColour);
         // If the pixel is in the green range...
-        if((pixelHue>20) && (pixelHue<70) && (pixelSaturation>100)) {
+        if ((pixelHue>20) && (pixelHue<70) && (pixelSaturation>100)) {
           // Overwrite the pixel with "concrete grey"
-          currentFrame.stroke(180,160,180);
-          currentFrame.point(x,y);
+          currentFrame.stroke(180, 160, 180);
+          currentFrame.point(x, y);
         }
       }
     }
+  }
   drawFrameOntoWindow(currentFrame);
 }
 
